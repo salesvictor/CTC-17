@@ -1,5 +1,5 @@
 import csv
-import Core.py as Core
+import Core as Core
 from math import *
 
 class Cities:
@@ -7,9 +7,14 @@ class Cities:
 		self.list = []
 		self.graph = []
 
+	@classmethod
 	def cost(cls, action):
 		distance = sqrt(pow(action[0].lat - action[1].lat,2) + pow(action[0].lng - action[1].lng,2))
 		return distance
+
+	@classmethod
+	def getActions(cls, state):
+
 
 class City:
 	def __init__(self, cityid, name, lat, lng):
