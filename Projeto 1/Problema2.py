@@ -45,6 +45,10 @@ class Game:
         self.state[self.blank_position[0]][self.blank_position[1]] = other_num
         self.blank_position = new_position
 
+    def cost(cls, action):
+        return 1
+
+Cities.cost(action)
 
 game = Game(10)
 print(game)
