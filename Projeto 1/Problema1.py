@@ -52,13 +52,8 @@ def main():
 	startCity = Cities[5]
 	endCity = Cities[219]
 
-
 	root = Node(None, 0, [startCity.cityid], 0)
 	getMinimum(startCity, endCity)
-
-	
-
-
 
 if __name__ == "__main__":
     main()
