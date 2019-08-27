@@ -76,10 +76,14 @@ class Game:
         return actions
 
 
-game = Game(3)
-print(game)
+def main():
+    game = Game(3)
+    print(game)
 
-game.shuffle(3)
-print(game)
+    game.shuffle(3)
+    print(game)
 
-print(Game.getActions(game.state))
+    print(Game.getActions(game.state))
+
+if __name__ == '__main__':
+    main()
