@@ -16,7 +16,7 @@ class Node:
         hp.heappush(self.children, child)
 
 def greedy(node, MainClass):
-    #print(f'depth: {node.depth}\ncost:{node.cost}\nstate:\n{MainClass.construct_by_state(node.state[-1])}')
+    print(f'depth: {node.depth}\ncost: {node.cost}\nstate:\n{node.state}')
 
     # Check if in the final state
     if MainClass.is_goal(node.state):
