@@ -16,17 +16,16 @@ class Node:
         hp.heappush(self.children, child)
 
 def greedy(node, MainClass):
-    print(f'depth: {node.depth}\ncost:{node.cost}\nstate:\n{MainClass.construct_by_state(node.state[-1])}')
+    #print(f'depth: {node.depth}\ncost:{node.cost}\nstate:\n{MainClass.construct_by_state(node.state[-1])}')
 
     # Check if in the final state
     if MainClass.is_goal(node.state):
         return node
 
     # Get possible actions
-	actions = MainClass.getActions(node.state)
-    
-    # If not, check children
     actions = MainClass.getActions(node.state)
+
+    # If not, check children
     for action in actions:
         node.createChild(action, MainClass.cost(action))
 
