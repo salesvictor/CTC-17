@@ -69,9 +69,10 @@ class Game:
                     target_x = dimension-1
                     target_y = dimension-1
                 else:
-                    target_x = number % dimension
+                    target_x = (number-1) // dimension
                     target_y = (number-1) % dimension
                 cost += abs(x-target_x)+abs(y-target_y)
+                #print(f'cost({x}, {y}) = {cost}\tshould be: ({target_x}, {target_y})')
         return cost
 
     @classmethod
@@ -93,10 +94,12 @@ class Game:
         return historic[-1] == Game.goal_state
 
 if __name__ == '__main__':
-    game = Game(3)
+    game = Game(9)
     print(game)
+    print(f'inital cost: {Game.cost([game.state])}')
 
-    game.shuffle(3)
+    game.shuffle(9)
     print(game)
+    print(f'final cost: {Game.cost([game.state])}')
 
     print(Game.getActions([game.state]))
