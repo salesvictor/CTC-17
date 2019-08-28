@@ -1,5 +1,6 @@
 import csv
 import Core as Core
+import copy
 from math import *
 
 class Cities:
@@ -18,7 +19,7 @@ class Cities:
 	def getActions(cls, state):
 		actions = []
 		for city in Cities.graph[state[-1]]:
-			aux = state
+			aux = copy.deepcopy(state)
 			aux.append(city)
 			actions.append(aux)
 		return actions
@@ -47,22 +48,32 @@ def createGraph(australia):
 	for city in australia.list:
 		if city.cityid > 1 and city.cityid%2 == 0:
 			if city.cityid + 2 < len(australia.list):
-				australia.graph[city.cityid].append(city.cityid + 2)
-				australia.graph[city.cityid + 2].append(city.cityid)
-			australia.graph[city.cityid].append(city.cityid - 1)
-			australia.graph[city.cityid - 1].append(city.cityid)
+				if (city.cityid + 2) not in australia.graph[city.cityid]:
+					australia.graph[city.cityid].append(city.cityid + 2)
+				if city.cityid not in australia.graph[city.cityid + 2]:
+					australia.graph[city.cityid + 2].append(city.cityid)
+			if (city.cityid - 1) not in australia.graph[city.cityid]:
+				australia.graph[city.cityid].append(city.cityid - 1)
+			if city.cityid not in australia.graph[city.cityid - 1]:
+				australia.graph[city.cityid - 1].append(city.cityid)
 
 		elif city.cityid%2 == 1 and city.cityid > 2:
 			if city.cityid + 1 < len(australia.list):
-				australia.graph[city.cityid].append(city.cityid + 1)
-				australia.graph[city.cityid + 1].append(city.cityid)
-			australia.graph[city.cityid].append(city.cityid - 2)
-			australia.graph[city.cityid - 2].append(city.cityid)
+				if (city.cityid + 1) not in australia.graph[city.cityid]:
+					australia.graph[city.cityid].append(city.cityid + 1)
+				if city.cityid not in australia.graph[city.cityid + 1]:
+					australia.graph[city.cityid + 1].append(city.cityid)
+			if (city.cityid - 2) not in australia.graph[city.cityid]:
+				australia.graph[city.cityid].append(city.cityid - 2)
+			if city.cityid not in australia.graph[city.cityid - 2]:
+				australia.graph[city.cityid - 2].append(city.cityid)
 
 def main():
 	australia = Cities(5, 219)
 	readMap(australia)
 	createGraph(australia)
+
+	print(australia.graph)
 
 	root = Core.Node(None, 0, [5], 0)
 	Core.greedy(root,Cities)
