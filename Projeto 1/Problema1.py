@@ -39,34 +39,26 @@ def readMap(australia):
 	with open('australia.csv') as csvfile:
 	    readCSV = list(csv.reader(csvfile, delimiter=','))
 	    australia.list.append(City(int(readCSV[1][0]), readCSV[1][1], float(readCSV[1][2]), float(readCSV[1][3])))
-	    australia.graph.append([])
+	    australia.graph.append(set([]))
 	    for row in readCSV[1:]:
 	    	australia.list.append(City(int(row[0]), row[1], float(row[2]), float(row[3])))
-	    	australia.graph.append([])
+	    	australia.graph.append(set([]))
 
 def createGraph(australia):
 	for city in australia.list:
 		if city.cityid > 1 and city.cityid%2 == 0:
 			if city.cityid + 2 < len(australia.list):
-				if (city.cityid + 2) not in australia.graph[city.cityid]:
-					australia.graph[city.cityid].append(city.cityid + 2)
-				if city.cityid not in australia.graph[city.cityid + 2]:
-					australia.graph[city.cityid + 2].append(city.cityid)
-			if (city.cityid - 1) not in australia.graph[city.cityid]:
-				australia.graph[city.cityid].append(city.cityid - 1)
-			if city.cityid not in australia.graph[city.cityid - 1]:
-				australia.graph[city.cityid - 1].append(city.cityid)
+				australia.graph[city.cityid].add(city.cityid + 2)
+				australia.graph[city.cityid + 2].add(city.cityid)
+			australia.graph[city.cityid].add(city.cityid - 1)
+			australia.graph[city.cityid - 1].add(city.cityid)
 
 		elif city.cityid%2 == 1 and city.cityid > 2:
 			if city.cityid + 1 < len(australia.list):
-				if (city.cityid + 1) not in australia.graph[city.cityid]:
-					australia.graph[city.cityid].append(city.cityid + 1)
-				if city.cityid not in australia.graph[city.cityid + 1]:
-					australia.graph[city.cityid + 1].append(city.cityid)
-			if (city.cityid - 2) not in australia.graph[city.cityid]:
-				australia.graph[city.cityid].append(city.cityid - 2)
-			if city.cityid not in australia.graph[city.cityid - 2]:
-				australia.graph[city.cityid - 2].append(city.cityid)
+				australia.graph[city.cityid].add(city.cityid + 1)
+				australia.graph[city.cityid + 1].add(city.cityid)
+			australia.graph[city.cityid].add(city.cityid - 2)
+			australia.graph[city.cityid - 2].add(city.cityid)
 
 def main():
 	australia = Cities(5, 219)
