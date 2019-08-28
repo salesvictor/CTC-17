@@ -22,9 +22,6 @@ def greedy(node, MainClass):
     if MainClass.is_goal(node.state):
         return node
 
-    # Get possible actions
-	actions = MainClass.getActions(node.state)
-    
     # If not, check children
     actions = MainClass.getActions(node.state)
     for action in actions:
