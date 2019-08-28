@@ -15,17 +15,21 @@ class Node:
             child = Node(self, self.depth + 1, state, cost)
             hp.heappush(self.children, child)
 
-def greedy(node, MainClass, actions):
+def greedy(node, MainClass):
+
     # Check if in the final state
     if node.state == MainClass.goal_state:
         return node
 
+    # Get possible actions
+	actions = MainClass.getActions(node.state)
+    
     # If not, check children
     for action in actions:
         node.createSon(action, MainClass.cost(action))
 
     while node.children:
-        leaf_node = greedy(hp.heappop(node.children), MainClass, MainClass.getActions(node.state))
+        leaf_node = greedy(hp.heappop(node.children), MainClass)
         if leaf_node == None:
             continue
         elif leaf_node.state == MainClass.goal_state:

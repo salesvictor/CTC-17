@@ -56,7 +56,8 @@ def main():
 	startCity = australia.list[5]
 	endCity = australia.list[219]
 
-	root = Node(None, 0, [startCity.cityid], 0)
+	root = Core.Node(None, 0, [startCity.cityid], 0)
+	
 
 if __name__ == "__main__":
     main()
