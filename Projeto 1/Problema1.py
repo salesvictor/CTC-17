@@ -19,9 +19,10 @@ class Cities:
 	def getActions(cls, state):
 		actions = []
 		for city in Cities.graph[state[-1]]:
-			aux = copy.deepcopy(state)
-			aux.append(city)
-			actions.append(aux)
+			if city not in state:
+				aux = copy.deepcopy(state)
+				aux.append(city)
+				actions.append(aux)
 		return actions
 
 	@classmethod
@@ -64,8 +65,6 @@ def main():
 	australia = Cities(5, 219)
 	readMap(australia)
 	createGraph(australia)
-
-	print(australia.graph)
 
 	root = Core.Node(None, 0, [5], 0)
 	Core.greedy(root,Cities)
