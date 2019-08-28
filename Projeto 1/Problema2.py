@@ -11,7 +11,7 @@ class Game:
         self.blank_position = (dimension-1, dimension-1)
         Game.goal_state = [[i+1 for i in range(j*dimension, j*dimension+dimension)] for j in range(dimension)]
         Game.goal_state[-1][-1] = None
-        self.state = self.goal_state
+        self.state = copy.deepcopy(Game.goal_state)
 
     def __str__(self):
         string = ''
@@ -32,7 +32,7 @@ class Game:
     def shuffle(self, moves = 10):
         for _ in range(moves):
             while True:
-                delta_position = secrets.choice(game._delta)
+                delta_position = secrets.choice(Game._delta)
                 new_position = tuple(self.blank_position[i]+delta_position[i] for i in range(2))
                 if self.isValid(new_position):
                     break
@@ -59,27 +59,44 @@ class Game:
         return game
 
     @classmethod
-    def cost(cls, action):
-        return 1
+    def cost(cls, historic):
+        cost = 0
+        state = historic[-1]
+        dimension = len(state)
+        for x, line in enumerate(state):
+            for y, number in enumerate(line):
+                if number == None:
+                    target_x = dimension-1
+                    target_y = dimension-1
+                else:
+                    target_x = number % dimension
+                    target_y = (number-1) % dimension
+                cost += abs(x-target_x)+abs(y-target_y)
+        return cost
 
     @classmethod
-    def getActions(cls, state):
+    def getActions(cls, historic):
         actions = []
-        game = Game.construct_by_state(state)
-        possible_moves = [tuple(game.blank_position[i]+game._delta[j][i] for i in range(2)) for j in range(4)]
+        game = Game.construct_by_state(historic[-1])
+        possible_moves = [tuple(game.blank_position[i]+Game._delta[j][i] for i in range(2)) for j in range(4)]
         for i, move in enumerate(possible_moves):
             if game.isValid(move):
                 new_game = copy.deepcopy(game)
                 new_game.move(new_game._delta[i])
-                actions.append(new_game.state)
+                if not new_game.state in historic:
+                    actions.append(historic+[new_game.state])
 
         return actions
 
+    @classmethod
+    def is_goal(cls, historic):
+        return historic[-1] == Game.goal_state
 
-game = Game(3)
-print(game)
+if __name__ == '__main__':
+    game = Game(3)
+    print(game)
 
-game.shuffle(3)
-print(game)
+    game.shuffle(3)
+    print(game)
 
-print(Game.getActions(game.state))
+    print(Game.getActions([game.state]))
