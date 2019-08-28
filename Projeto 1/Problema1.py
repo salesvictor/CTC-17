@@ -11,13 +11,13 @@ class Cities:
 
 	@classmethod
 	def cost(cls, action):
-		distance = sqrt(pow((Cities.list[action[len(action)-1]]).lat - (Cities.list[Cities.finish]).lat,2) + pow((Cities.list[action[len(action)-1]]).lng - (Cities.list[Cities.finish]).lng,2))
+		distance = sqrt(pow((Cities.list[action[-1]]).lat - (Cities.list[Cities.finish]).lat,2) + pow((Cities.list[action[-1]]).lng - (Cities.list[Cities.finish]).lng,2))
 		return distance
 
 	@classmethod
 	def getActions(cls, state):
 		actions = []
-		for city in Cities.graph[state[len(state)-1]]:
+		for city in Cities.graph[state[-1]]:
 			aux = state
 			aux.append(city)
 			actions.append(aux)
@@ -25,7 +25,7 @@ class Cities:
 
 	@classmethod
 	def is_goal(cls, historic):
-		return historic[len(historic)-1] == Cities.finish
+		return historic[-1] == Cities.finish
 
 class City:
 	def __init__(self, cityid, name, lat, lng):
