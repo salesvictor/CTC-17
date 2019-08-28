@@ -4,20 +4,20 @@ from math import *
 
 class Cities:
 	def __init__(self, start, finish):
-		self.list = []
-		self.graph = []
+		Cities.list = []
+		Cities.graph = []
 		Cities.start = start
 		Cities.finish = finish
 
 	@classmethod
 	def cost(cls, action):
-		distance = sqrt(pow(action[0].lat - action[1].lat,2) + pow(action[0].lng - action[1].lng,2))
+		distance = sqrt(pow((Cities.list[action[len(action)-1]]).lat - (Cities.list[Cities.finish]).lat,2) + pow((Cities.list[action[len(action)-1]]).lng - (Cities.list[Cities.finish]).lng,2))
 		return distance
 
 	@classmethod
 	def getActions(cls, state):
 		actions = []
-		for city in self.graph[state[len(state)-1]]:
+		for city in Cities.graph[state[len(state)-1]]:
 			aux = state
 			aux.append(city)
 			actions.append(aux)
@@ -63,8 +63,6 @@ def main():
 	australia = Cities(5, 219)
 	readMap(australia)
 	createGraph(australia)
-	print(australia.list)
-	print(australia.graph)
 
 	root = Core.Node(None, 0, [5], 0)
 	Core.greedy(root,Cities)

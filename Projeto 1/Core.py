@@ -20,6 +20,7 @@ def greedy(node, MainClass):
 
     # Check if in the final state
     if MainClass.is_goal(node.state):
+        print(node.state)
         return node
 
     # Get possible actions
