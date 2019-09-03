@@ -12,10 +12,19 @@ class Cities:
         Cities.finish = finish
 
     @classmethod
-    def cost(cls, action):
+    def g_cost(cls, action):
         city = Cities.list[action[-1]]
         goal_city = Cities.list[Cities.finish]
         distance = ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
+        return distance
+
+    @classmethod
+    def h_cost(cls, action):
+    	distance = 0
+    	for i in range(len(action)-1):
+    		city = Cities.list[action[i]]
+        	goal_city = Cities.list[action[i+1]]
+    		distance += ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
         return distance
 
     @classmethod
