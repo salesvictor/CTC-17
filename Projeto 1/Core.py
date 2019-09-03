@@ -28,7 +28,7 @@ def greedy(node, MainClass):
 
     # If not, check children
     for action in actions:
-        node.createChild(action, MainClass.cost(action))
+        node.createChild(action, MainClass.h_cost(action))
 
     while node.children:
         leaf_node = greedy(hp.heappop(node.children), MainClass)
@@ -54,7 +54,7 @@ def a_star(node, MainClass):
 
     # If not, check children
     for action in actions:
-        node.createChild(action, node.cost + MainClass.cost(action))
+        node.createChild(action, MainClass.g_cost(action) + MainClass.h_cost(action))
 
     while node.children:
         leaf_node = a_star(hp.heappop(node.children), MainClass)

@@ -60,7 +60,11 @@ class Game:
         return game
 
     @classmethod
-    def cost(cls, historic):
+    def g_cost(cls, historic):
+        return len(historic)
+
+    @classmethod
+    def h_cost(cls, historic):
         cost = 0
         state = historic[-1]
         dimension = len(state)
@@ -100,13 +104,13 @@ if __name__ == '__main__':
     game_original = copy.deepcopy(game)
     print(game)
 
-    root = Core.Node(None, 0, [game.state], Game.cost([game.state]))
+    root = Core.Node(None, 0, [game.state], 0)
     solution = Core.greedy(root, Game)
-    print(f'Steps: {len(solution.state)}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
 
     game = game_original
     print(game)
 
-    root = Core.Node(None, 0, [game.state], Game.cost([game.state]))
+    root = Core.Node(None, 0, [game.state], 0)
     solution = Core.a_star(root, Game)
-    print(f'Steps: {len(solution.state)}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
