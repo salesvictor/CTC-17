@@ -1,6 +1,8 @@
 import csv
 import copy
 import Core as Core
+import copy
+from math import *
 
 class Cities:
     def __init__(self, start, finish):
@@ -16,15 +18,15 @@ class Cities:
         distance = ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
         return distance
 
-    @classmethod
-    def getActions(cls, state):
-        actions = []
-        for city in Cities.graph[state[-1]]:
-            if not city in state:
-                aux = copy.deepcopy(state)
-                aux.append(city)
-                actions.append(aux)
-        return actions
+	@classmethod
+	def getActions(cls, state):
+		actions = []
+		for city in Cities.graph[state[-1]]:
+			if city not in state:
+				aux = copy.deepcopy(state)
+				aux.append(city)
+				actions.append(aux)
+		return actions
 
     @classmethod
     def is_goal(cls, historic):
@@ -38,29 +40,29 @@ class City:
         self.lng = lng
 
 def readMap(australia):
-    with open('australia.csv') as csvfile:
-        readCSV = list(csv.reader(csvfile, delimiter=','))
-        australia.list.append(City(int(readCSV[1][0]), readCSV[1][1], float(readCSV[1][2]), float(readCSV[1][3])))
-        australia.graph.append([])
-        for row in readCSV[1:]:
-            australia.list.append(City(int(row[0]), row[1], float(row[2]), float(row[3])))
-            australia.graph.append([])
+	with open('australia.csv') as csvfile:
+	    readCSV = list(csv.reader(csvfile, delimiter=','))
+	    australia.list.append(City(int(readCSV[1][0]), readCSV[1][1], float(readCSV[1][2]), float(readCSV[1][3])))
+	    australia.graph.append(set([]))
+	    for row in readCSV[1:]:
+	    	australia.list.append(City(int(row[0]), row[1], float(row[2]), float(row[3])))
+	    	australia.graph.append(set([]))
 
 def createGraph(australia):
-    for city in australia.list:
-        if city.cityid > 1 and city.cityid%2 == 0:
-            if city.cityid + 2 < len(australia.list):
-                australia.graph[city.cityid].append(city.cityid + 2)
-                australia.graph[city.cityid + 2].append(city.cityid)
-                australia.graph[city.cityid].append(city.cityid - 1)
-                australia.graph[city.cityid - 1].append(city.cityid)
+	for city in australia.list:
+		if city.cityid > 1 and city.cityid%2 == 0:
+			if city.cityid + 2 < len(australia.list):
+				australia.graph[city.cityid].add(city.cityid + 2)
+				australia.graph[city.cityid + 2].add(city.cityid)
+			australia.graph[city.cityid].add(city.cityid - 1)
+			australia.graph[city.cityid - 1].add(city.cityid)
 
-        elif city.cityid%2 == 1 and city.cityid > 2:
-            if city.cityid + 1 < len(australia.list):
-                australia.graph[city.cityid].append(city.cityid + 1)
-                australia.graph[city.cityid + 1].append(city.cityid)
-                australia.graph[city.cityid].append(city.cityid - 2)
-                australia.graph[city.cityid - 2].append(city.cityid)
+		elif city.cityid%2 == 1 and city.cityid > 2:
+			if city.cityid + 1 < len(australia.list):
+				australia.graph[city.cityid].add(city.cityid + 1)
+				australia.graph[city.cityid + 1].add(city.cityid)
+			australia.graph[city.cityid].add(city.cityid - 2)
+			australia.graph[city.cityid - 2].add(city.cityid)
 
 def main():
     australia = Cities(5, 219)
