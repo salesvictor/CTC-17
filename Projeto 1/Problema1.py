@@ -22,9 +22,9 @@ class Cities:
     def h_cost(cls, action):
     	distance = 0
     	for i in range(len(action)-1):
-    		city = Cities.list[action[i]]
-        	goal_city = Cities.list[action[i+1]]
-    		distance += ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
+    	    city = Cities.list[action[i]]
+            goal_city = Cities.list[action[i+1]]
+    	    distance += ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
         return distance
 
     @classmethod
@@ -58,20 +58,20 @@ def readMap(australia):
             australia.graph.append(set([]))
 
 def createGraph(australia):
-	for city in australia.list:
-		if city.cityid > 1 and city.cityid%2 == 0:
-			if city.cityid + 2 < len(australia.list):
-				australia.graph[city.cityid].add(city.cityid + 2)
-				australia.graph[city.cityid + 2].add(city.cityid)
-			australia.graph[city.cityid].add(city.cityid - 1)
-			australia.graph[city.cityid - 1].add(city.cityid)
-
-		elif city.cityid%2 == 1 and city.cityid > 2:
-			if city.cityid + 1 < len(australia.list):
-				australia.graph[city.cityid].add(city.cityid + 1)
-				australia.graph[city.cityid + 1].add(city.cityid)
-			australia.graph[city.cityid].add(city.cityid - 2)
-			australia.graph[city.cityid - 2].add(city.cityid)
+    for city in australia.list:
+        if city.cityid > 1 and city.cityid%2 == 0:
+            if city.cityid + 2 < len(australia.list):
+                australia.graph[city.cityid].add(city.cityid + 2)
+                australia.graph[city.cityid + 2].add(city.cityid)
+            australia.graph[city.cityid].add(city.cityid - 1)
+            australia.graph[city.cityid - 1].add(city.cityid)
+        
+        elif city.cityid%2 == 1 and city.cityid > 2:
+            if city.cityid + 1 < len(australia.list):
+                australia.graph[city.cityid].add(city.cityid + 1)
+                australia.graph[city.cityid + 1].add(city.cityid)
+            australia.graph[city.cityid].add(city.cityid - 2)
+            australia.graph[city.cityid - 2].add(city.cityid)
 
 def main():
     australia = Cities(5, 219)
@@ -79,14 +79,16 @@ def main():
     createGraph(australia)
 
     root = Core.Node(None, 0, [5], 0)
-    Core.greedy(root,Cities)
+    solution = Core.greedy(root,Cities)
+    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
 
     australia = Cities(5, 219)
     readMap(australia)
     createGraph(australia)
 
     root = Core.Node(None, 0, [5], 0)
-    Core.a_star(root,Cities)
+    solution = Core.a_star(root,Cities)
+    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
 
 if __name__ == "__main__":
     main()
