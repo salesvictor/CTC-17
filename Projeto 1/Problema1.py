@@ -68,6 +68,13 @@ def main():
 
 	root = Core.Node(None, 0, [5], 0)
 	Core.greedy(root,Cities)
+
+	australia = Cities(5, 219)
+	readMap(australia)
+	createGraph(australia)
+
+	root = Core.Node(None, 0, [5], 0)
+	Core.a_star(root,Cities)
 	
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import copy
 import secrets
+import Core
 
 class Game:
     _delta_x = [-1,1, 0, 0]
@@ -95,11 +96,17 @@ class Game:
 
 if __name__ == '__main__':
     game = Game(9)
+    game.shuffle()
+    game_original = copy.deepcopy(game)
     print(game)
-    print(f'inital cost: {Game.cost([game.state])}')
 
-    game.shuffle(9)
+    root = Core.Node(None, 0, [game.state], Game.cost([game.state]))
+    solution = Core.greedy(root, Game)
+    print(f'Steps: {len(solution.state)}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+
+    game = game_original
     print(game)
-    print(f'final cost: {Game.cost([game.state])}')
 
-    print(Game.getActions([game.state]))
+    root = Core.Node(None, 0, [game.state], Game.cost([game.state]))
+    solution = Core.a_star(root, Game)
+    print(f'Steps: {len(solution.state)}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')

@@ -16,11 +16,11 @@ class Node:
         hp.heappush(self.children, child)
 
 def greedy(node, MainClass):
-    #print(f'depth: {node.depth}\ncost:{node.cost}\nstate:\n{MainClass.construct_by_state(node.state[-1])}')
+    # print(f'depth: {node.depth}\ncost:{node.cost}\nstate:\n{node.state[-1]}')
 
     # Check if in the final state
     if MainClass.is_goal(node.state):
-        print(node.state)
+        #print(node.state, node.depth)
         return node
 
     # Get possible actions
@@ -32,6 +32,32 @@ def greedy(node, MainClass):
 
     while node.children:
         leaf_node = greedy(hp.heappop(node.children), MainClass)
+        if leaf_node == None:
+            continue
+        elif MainClass.is_goal(leaf_node.state):
+            return leaf_node
+        elif not leaf_node.children:
+            return None
+
+    return None
+
+def a_star(node, MainClass):
+    # print(f'depth: {node.depth}\ncost:{node.cost}\nstate:\n{node.state[-1]}')
+
+    # Check if in the final state
+    if MainClass.is_goal(node.state):
+        #print(node.state, node.depth)
+        return node
+
+    # Get possible actions
+    actions = MainClass.getActions(node.state)
+
+    # If not, check children
+    for action in actions:
+        node.createChild(action, node.cost + MainClass.cost(action))
+
+    while node.children:
+        leaf_node = a_star(hp.heappop(node.children), MainClass)
         if leaf_node == None:
             continue
         elif MainClass.is_goal(leaf_node.state):
