@@ -61,7 +61,9 @@ class Game:
 
     @classmethod
     def g_cost(cls, historic):
-        return len(historic)
+        initial = Game.construct_by_state(historic[0]).blank_position
+        final = Game.construct_by_state(historic[-1]).blank_position
+        return abs(final[0]-initial[0]) + abs(final[1]-initial[1])
 
     @classmethod
     def h_cost(cls, historic):
@@ -102,15 +104,16 @@ if __name__ == '__main__':
     game = Game(9)
     game.shuffle()
     game_original = copy.deepcopy(game)
-    print(game)
 
+    print('=============== USING GREEDY ===============')
     root = Core.Node(None, 0, [game.state], 0)
     solution = Core.greedy(root, Game)
-    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+    for idx, state in enumerate(solution.state):
+        print(f'Step: {idx+1}\nState:\n{Game.construct_by_state(state)}')
 
     game = game_original
-    print(game)
-
+    print('=============== USING A* ===============')
     root = Core.Node(None, 0, [game.state], 0)
     solution = Core.a_star(root, Game)
-    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+    for idx, state in enumerate(solution.state):
+        print(f'Step: {idx+1}\nState:\n{Game.construct_by_state(state)}')
