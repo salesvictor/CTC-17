@@ -12,19 +12,19 @@ class Cities:
         Cities.finish = finish
 
     @classmethod
-    def g_cost(cls, action):
+    def h_cost(cls, action):
         city = Cities.list[action[-1]]
         goal_city = Cities.list[Cities.finish]
         distance = ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
         return distance
 
     @classmethod
-    def h_cost(cls, action):
-    	distance = 0
-    	for i in range(len(action)-1):
-    	    city = Cities.list[action[i]]
+    def g_cost(cls, action):
+        distance = 0
+        for i in range(len(action)-1):
+            city = Cities.list[action[i]]
             goal_city = Cities.list[action[i+1]]
-    	    distance += ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
+            distance += ((city.lat - goal_city.lat) ** 2 + (city.lng - goal_city.lng) ** 2) ** .5
         return distance
 
     @classmethod
@@ -80,7 +80,7 @@ def main():
 
     root = Core.Node(None, 0, [5], 0)
     solution = Core.greedy(root,Cities)
-    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+    print(f'depth: {solution.depth}\ncost:{Cities.g_cost(solution.state)}\nstate:\n{solution.state}')
 
     australia = Cities(5, 219)
     readMap(australia)
@@ -88,7 +88,7 @@ def main():
 
     root = Core.Node(None, 0, [5], 0)
     solution = Core.a_star(root,Cities)
-    print(f'Steps: {len(solution.state)}\nCost: {solution.cost}\nFinal State:\n{Game.construct_by_state(solution.state[-1])}')
+    print(f'depth: {solution.depth}\ncost:{Cities.g_cost(solution.state)}\nstate:\n{solution.state}')
 
 if __name__ == "__main__":
     main()
