@@ -1,6 +1,7 @@
 import random
 import copy
 import time
+import sys
 
 class Game:
     def __init__(self, size):
@@ -77,7 +78,7 @@ class Node:
         self.state = state
         self.value = value
 
-def hill_climbing(MainClass):
+def hill_climbing_max_tries(MainClass):
     for i in range(100):
         init_state = MainClass.new_state()
         init_value = MainClass.get_value(init_state)
@@ -96,41 +97,41 @@ def hill_climbing(MainClass):
 
     return solution
 
-# def hill_climbing(MainClass):
-#     solved = False
-#     i = 1
-#     while not solved:
-#         init_state = MainClass.new_state()
-#         init_value = MainClass.get_value(init_state)
-#         node = Node(init_state, init_value)
-#         if i == 1:
-#             solution = node
-#         maximum = False
-#         while not maximum:
-#             aux = MainClass.get_neighbor(node)
-#             if aux[0]:
-#                 node = Node(aux[0], aux[1])
-#             else:
-#                 maximum = True
-#         if node.value > solution.value:
-#             solution = node
-#         if MainClass.is_solution(solution):
-#             solved = True
-#         i += 1
+def hill_climbing_until_solved(MainClass):
+    solved = False
+    i = 1
+    while not solved:
+        init_state = MainClass.new_state()
+        init_value = MainClass.get_value(init_state)
+        node = Node(init_state, init_value)
+        if i == 1:
+            solution = node
+        maximum = False
+        while not maximum:
+            aux = MainClass.get_neighbor(node)
+            if aux[0]:
+                node = Node(aux[0], aux[1])
+            else:
+                maximum = True
+        if node.value > solution.value:
+            solution = node
+        if MainClass.is_solution(solution):
+            solved = True
+        i += 1
 
-#     return solution
+    return solution
             
 def main():
+    nrainhas = Game(int(sys.argv[1]))
 
-    start_time = time.time()
-
-    nrainhas = Game(9)
+    funcs = [hill_climbing_until_solved, hill_climbing_max_tries]
+    func = int(sys.argv[2])
     
-    solution = hill_climbing(nrainhas)
-
+    start_time = time.time()
+    solution = funcs[func](nrainhas)
     elapsed_time = time.time() - start_time
 
-    print(solution.state, solution.value, elapsed_time)
+    print(f'{solution.state};{solution.value};{elapsed_time}')
 
 if __name__ == "__main__":
     main()
