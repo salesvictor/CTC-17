@@ -80,7 +80,13 @@ def main():
 
     root = Core.Node(None, 0, [5], 0)
     solution = Core.greedy(root,Cities)
-    print(f'depth: {solution.depth}\ncost:{Cities.g_cost(solution.state)}\nstate:\n{solution.state}')
+    print(f'depth: {solution.depth}\ncost:{Cities.g_cost(solution.state)}\ncities list:')
+    i = 0
+    for citie in solution.state:
+    	print("\t order: ", i, " id: ", citie, " city: ", Cities.list[citie].name)
+    	i += 1
+
+    print(solution.state)
 
     australia = Cities(5, 219)
     readMap(australia)
@@ -88,7 +94,13 @@ def main():
 
     root = Core.Node(None, 0, [5], 0)
     solution = Core.a_star(root,Cities)
-    print(f'depth: {solution.depth}\ncost:{Cities.g_cost(solution.state)}\nstate:\n{solution.state}')
+    print(f'depth: {solution.depth}\ncost:{Cities.g_cost(solution.state)}\ncities list:')
+    i = 0
+    for citie in solution.state:
+    	print("\t order: ", i, " id: ", citie, " city: ", Cities.list[citie].name)
+    	i += 1
+
+    print(solution.state)
 
 if __name__ == "__main__":
     main()
