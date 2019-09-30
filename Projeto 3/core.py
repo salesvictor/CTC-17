@@ -27,7 +27,7 @@ def parse_file(filename: str):
     return vals
 
 
-def value_counter(values):
+def value_counter(values: list) -> dict:
     value_count = {x: 0 for x in values}
     for value in values:
         value_counter[value] += 1
@@ -35,7 +35,7 @@ def value_counter(values):
     return value_count
 
 
-def entropy(outcomes):
+def entropy(outcomes: list) -> float:
     entropy = 0
     total = len(outcomes)
     outcome_count = value_counter(outcomes)
@@ -45,7 +45,7 @@ def entropy(outcomes):
     return entropy
     
 
-def information_gain(examples, target_attribute, attribute):
+def information_gain(examples, target_attribute, attribute) -> float:
     attribute_values = set()
     for value in examples[attribute]:
         attribute_values.add(value)
@@ -63,8 +63,8 @@ def information_gain(examples, target_attribute, attribute):
     return entropy(example_outcomes) - information_entropy
 
 
-def most_common(examples):
-    return max(set(examples), key=examples.count)
+def most_common(values: list):
+    return max(set(values), key=values.count)
 
 
 def decision_tree(examples, target_attribute, attributes):
