@@ -10,11 +10,10 @@ class Node:
 class Tree:
     def __init__(self):
         self.root = Node()
-        self.children = []
+        self.children = {}
 
-    def add_child(self, child: Node):
-        self.children.append(child)
-
+    def add_child(self, value: str, child: Node):
+        self.children[value] = child
 
 def parse_file(filename: str):
     file = open(filename, 'r', encoding='latin-1')
@@ -26,14 +25,12 @@ def parse_file(filename: str):
     file.close()
     return vals
 
-
 def value_counter(values: list) -> dict:
     value_count = {x: 0 for x in values}
     for value in values:
         value_count[value] += 1
 
     return value_count
-
 
 def entropy(outcomes: list) -> float:
     entropy = 0
@@ -43,11 +40,8 @@ def entropy(outcomes: list) -> float:
         entropy -= count/total * math.log2(count/total)
 
     return entropy
-    
 
 def information_gain(examples, entire_entropy) -> float:
-    print("Information gain")
-
     if type(examples.iloc[0,0]) == list:
         attribute_values = {item for sublist in examples.iloc[:,0] for item in sublist}
 
@@ -57,6 +51,7 @@ def information_gain(examples, entire_entropy) -> float:
         for attribute_value in attribute_values:
             mask = examples.iloc[:,0].apply(lambda x: attribute_value in x)
             outcomes = examples[mask].iloc[:,-1]
+            outcomes = outcomes.reset_index(drop = True)
             value_entropy = entropy(outcomes)
             outcome_count = value_counter(outcomes)
             for count in outcome_count.values():
@@ -70,16 +65,13 @@ def information_gain(examples, entire_entropy) -> float:
         header = list(examples.columns)
         for attribute_value in attribute_values:
             outcomes = (examples[examples[header[0]] == attribute_value]).iloc[:,-1]
+            outcomes = outcomes.reset_index(drop = True)
             value_entropy = entropy(outcomes)
             outcome_count = value_counter(outcomes)
             for count in outcome_count.values():
                 information_entropy += count/total * value_entropy
 
     return entire_entropy - information_entropy
-
-
-def most_common(values: list):
-    return max(set(values), key=values.count)
 
 def best_attribute(examples):
     entire_entropy = entropy(examples.iloc[:,-1])
@@ -93,17 +85,13 @@ def best_attribute(examples):
 
     return header[attributes_entropy.index(max(attributes_entropy))]
 
-
 def decision_tree(examples):
-
-    print("Decision Tree")
-
     tree = Tree()
 
     if len(set(examples.iloc[:,-1])) == 1:
         tree.root.label = examples.iloc[0,-1]
     elif len(examples.columns) == 1:
-        tree.root.label = most_common(examples.iloc[:,-1])
+        tree.root.label = examples.iloc[:,-1].mode()[0]
     else:
         attribute = best_attribute(examples)
         tree.root.attribute = attribute
@@ -113,30 +101,42 @@ def decision_tree(examples):
                 child_tree = Tree()
                 mask = examples.iloc[:,0].apply(lambda x: value in x)
                 relevant_examples = examples[mask]
+                relevant_examples = relevant_examples.reset_index(drop = True)
                 if relevant_examples.empty:
-                    child_tree.root.label = most_common(examples.iloc[:,-1])
+                    child_tree.root.label = examples.iloc[:,-1].mode()[0]
                 else:
                     child_tree = decision_tree(relevant_examples.drop(columns=[attribute]))
 
-                tree.add_child(child_tree)
+                tree.add_child(str(value), child_tree)
         else:
             values = set(examples[attribute])
             for value in values:
                 child_tree = Tree()
                 relevant_examples = examples[examples[attribute] == value]
+                relevant_examples = relevant_examples.reset_index(drop = True)
                 if relevant_examples.empty:
-                    child_tree.root.label = most_common(examples.iloc[:,-1])
+                    child_tree.root.label = examples.iloc[:,-1].mode()[0]
                 else:
                     child_tree = decision_tree(relevant_examples.drop(columns=[attribute]))
 
-                tree.add_child(child_tree)
-
+                tree.add_child(str(value), child_tree)
     return tree
 
-    def print_tree(tree):
-        print("(Label: ",tree.root.label, " , Attribute: ", tree.root.attribute, ")")
-        for child in tree.children:
-            print_tree(child)
+def print_tree(tree):
+    print("(Label: ",tree.root.label, " , Attribute: ", tree.root.attribute, ")")
+    for child in tree.children:
+        print_tree(child)
+
+def get_rating(tree, user_input):
+    #print("(Label: ",tree.root.label, " , Attribute: ", tree.root.attribute, ")")
+    #print(tree.children)
+    if tree.root.attribute != None:
+        rating = get_rating(tree.children[user_input[tree.root.attribute]], user_input)
+
+    else:
+        rating = tree.root.label
+
+    return rating
 
 if __name__ == "__main__":
 
@@ -151,4 +151,39 @@ if __name__ == "__main__":
     final['Genres'] = final['Genres'].str.split(pat="|")
 
     answer = decision_tree(final)
-    print_tree(answer)
+    #print_tree(answer)
+
+    movies = [
+        ["Star Wars: Episode V - The Empire Strikes Back (1980)", "Action|Adventure|Fantasy|Sci-Fi", "5"],
+        ["Monty Python and the Holy Grail (1974)", "Comedy", "5"],
+        ["Toy Story (1995)", "Animation|Children's|Comedy", "5"],
+        ["Alien (1979)", "Action|Horror|Sci-Fi|Thriller", "4"],
+        ["Monty Python's Life of Brian (1979)", "Comedy", "4"],
+        ["Highlander (1986)", "Action|Adventure", "4"],
+        ["Jumanji (1995)", "Adventure|Children's|Fantasy", "3"],
+        ["Godfather: Part III, The (1990)", "Action|Crime|Drama", "2"],
+        ["Robocop 3 (1993)", "Sci-Fi|Thriller", "1"],
+        ["Super Mario Bros. (1993)", "Action|Adventure|Children's|Sci-Fi", "1"]
+    ]
+
+    for movie in movies:
+        user_input = {
+            'Gender': "M",
+            'Age': "18",
+            'Occupation': "17",
+            'Genres': movie[1]
+        }
+
+        genres = user_input['Genres'].split("|")
+
+        final_rating = 0
+        for i in range(len(genres)):
+            user_input['Genres'] = genres[i]
+            rating = get_rating(answer, user_input)
+            print("Rating ", user_input['Genres'],": ", rating)
+            final_rating += rating
+
+        print("Film name:", movie[0])
+        print("User rating: ", movie[2])
+        print("Script Rating: ", final_rating/len(genres))
+

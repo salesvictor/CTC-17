@@ -14,7 +14,7 @@ print(int(movie_ratings.mean()))
 # Movie Mode
 
 #print(movie_ratings.value_counts())
-print(movie_ratings.mode())
+print(movie_ratings.mode()[0])
 
 # Hit Rate
 
