@@ -1,11 +1,14 @@
 import math
 import copy
+import pickle
 import pandas as pd
+
 
 class Node:
     def __init__(self):
         self.label = None
         self.attribute = None
+
 
 class Tree:
     def __init__(self):
@@ -14,6 +17,7 @@ class Tree:
 
     def add_child(self, value: str, child: Node):
         self.children[value] = child
+
 
 def parse_file(filename: str):
     file = open(filename, 'r', encoding='latin-1')
@@ -25,12 +29,14 @@ def parse_file(filename: str):
     file.close()
     return vals
 
+
 def value_counter(values: list) -> dict:
     value_count = {x: 0 for x in values}
     for value in values:
         value_count[value] += 1
 
     return value_count
+
 
 def entropy(outcomes: list) -> float:
     entropy = 0
@@ -40,6 +46,7 @@ def entropy(outcomes: list) -> float:
         entropy -= count/total * math.log2(count/total)
 
     return entropy
+
 
 def information_gain(examples, entire_entropy) -> float:
     if type(examples.iloc[0,0]) == list:
@@ -73,6 +80,7 @@ def information_gain(examples, entire_entropy) -> float:
 
     return entire_entropy - information_entropy
 
+
 def best_attribute(examples):
     entire_entropy = entropy(examples.iloc[:,-1])
 
@@ -84,6 +92,7 @@ def best_attribute(examples):
     header = list(examples.columns)
 
     return header[attributes_entropy.index(max(attributes_entropy))]
+
 
 def decision_tree(examples):
     tree = Tree()
@@ -122,10 +131,12 @@ def decision_tree(examples):
                 tree.add_child(str(value), child_tree)
     return tree
 
-def print_tree(tree):
-    print("(Label: ",tree.root.label, " , Attribute: ", tree.root.attribute, ")")
-    for child in tree.children:
-        print_tree(child)
+
+def print_tree(value_taken: str, tree):
+    print(f"(Value Taken: {value_taken}, Label: {tree.root.label}, Attribute: {tree.root.attribute})")
+    for child in tree.children.items():
+        print_tree(*child)
+
 
 def get_rating(tree, user_input):
     #print("(Label: ",tree.root.label, " , Attribute: ", tree.root.attribute, ")")
@@ -150,8 +161,9 @@ if __name__ == "__main__":
     final = b.loc[:,['Gender', 'Age', 'Occupation', 'Genres', 'Rating']]
     final['Genres'] = final['Genres'].str.split(pat="|")
 
-    answer = decision_tree(final)
-    #print_tree(answer)
+    #answer = decision_tree(final)
+    answer = pickle.load(open('tree.bin', 'rb'))
+    print_tree('Root',answer)
 
     movies = [
         ["Star Wars: Episode V - The Empire Strikes Back (1980)", "Action|Adventure|Fantasy|Sci-Fi", "5"],
