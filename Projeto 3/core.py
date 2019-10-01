@@ -133,7 +133,7 @@ def decision_tree(examples):
 
 
 def print_tree(value_taken: str, tree):
-    print(f"(Value Taken: {value_taken}, Label: {tree.root.label}, Attribute: {tree.root.attribute})")
+    #print(f"(Value Taken: {value_taken}, Label: {tree.root.label}, Attribute: {tree.root.attribute})")
     for child in tree.children.items():
         print_tree(*child)
 
@@ -163,27 +163,52 @@ if __name__ == "__main__":
 
     #answer = decision_tree(final)
     answer = pickle.load(open('tree.bin', 'rb'))
-    print_tree('Root',answer)
+    #print_tree('Root',answer)
 
     movies = [
-        ["Star Wars: Episode V - The Empire Strikes Back (1980)", "Action|Adventure|Fantasy|Sci-Fi", "5"],
-        ["Monty Python and the Holy Grail (1974)", "Comedy", "5"],
-        ["Toy Story (1995)", "Animation|Children's|Comedy", "5"],
-        ["Alien (1979)", "Action|Horror|Sci-Fi|Thriller", "4"],
-        ["Monty Python's Life of Brian (1979)", "Comedy", "4"],
-        ["Highlander (1986)", "Action|Adventure", "4"],
-        ["Jumanji (1995)", "Adventure|Children's|Fantasy", "3"],
-        ["Godfather: Part III, The (1990)", "Action|Crime|Drama", "2"],
-        ["Robocop 3 (1993)", "Sci-Fi|Thriller", "1"],
-        ["Super Mario Bros. (1993)", "Action|Adventure|Children's|Sci-Fi", "1"]
+        ["1", "Toy Story (1995)", "Animation|Children's|Comedy", "5"],
+        ["2", "Jumanji (1995)", "Adventure|Children's|Fantasy", "2"],
+        ["5", "Father of the Bride Part II (1995)", "Comedy", "1"],
+        ["32", "Twelve Monkeys (1995)", "Drama|Sci-Fi", "5"],
+        ["34", "Babe (1995)", "Children's|Comedy|Drama", "1"],
+        ["39", "Clueless (1995)", "Comedy|Romance", "5"],
+        ["48", "Pocahontas (1995)", "Animation|Children's|Musical|Romance", "5"],
+        ["73", "Misérables, Les (1995)", "Drama|Musical", "3"],
+        ["150", "Apollo 13 (1995)", "Drama", "3"],
+        ["158", "Casper (1995)", "Adventure|Children's", "4"],
+        ["194", "Smoke (1995)", "Drama", "2"],
+        ["235", "Ed Wood (1994)", "Comedy|Drama", "4"],
+        ["260", "Star Wars: Episode IV - A New Hope (1977)", "Action|Adventure|Fantasy|Sci-Fi", "2"],
+        ["261", "Little Women (1994)", "Drama", "4"],
+        ["296", "Pulp Fiction (1994)", "Crime|Drama", "5"],
+        ["306", "Three Colors: Red (1994)", "Drama", "4"],
+        ["307", "Three Colors: Blue (1993)", "Drama", "4"],
+        ["308", "Three Colors: White (1994)", "Drama", "4"],
+        ["356", "Forrest Gump (1994)", "Comedy|Romance|War", "4"],
+        ["362", "Jungle Book, The (1994)", "Adventure|Children's|Romance", "3"],
+        ["364", "Lion King, The (1994)", "Animation|Children's|Musical", "5"],
+        ["441", "Dazed and Confused (1993)", "Comedy", "5"],
+        ["480", "Jurassic Park (1993)", "Action|Adventure|Sci-Fi", "4"],
+        ["484", "Lassie (1994)", "Adventure|Children's", "3"],
+        ["541", "Blade Runner (1982)", "Film-Noir|Sci-Fi", "4"],
+        ["575", "Little Rascals, The (1994)", "Children's|Comedy", "5"],
+        ["582", "Metisse (Café au Lait) (1993)", "Comedy", "3"],
+        ["586", "Home Alone (1990)", "Children's|Comedy", "5"],
+        ["587", "Ghost (1990)", "Comedy|Romance|Thriller", "3"],
+        ["589", "Terminator 2: Judgment Day (1991)", "Action|Sci-Fi|Thriller", "1"],
+        ["590", "Dances with Wolves (1990)", "Adventure|Drama|Western", "4"],
+        ["592", "Batman (1989)", "Action|Adventure|Crime|Drama", "5"],
+        ["594", "Snow White and the Seven Dwarfs (1937)", "Animation|Children's|Musical", "4"],
+        ["595", "Beauty and the Beast (1991)", "Animation|Children's|Musical", "5"],
+        ["597", "Pretty Woman (1990)", "Comedy|Romance", "4"]
     ]
 
     for movie in movies:
         user_input = {
-            'Gender': "M",
-            'Age': "18",
-            'Occupation': "17",
-            'Genres': 'Action|Adventure|Animation|Children\'s|Comedy|Crime|Documentary|Drama|Fantasy|Film-Noir|Horror|Musical|Mystery|Romance|Sci-Fi|Thriller|War|Western'
+            'Gender': "F",
+            'Age': "25",
+            'Occupation': "14",
+            'Genres': movie[2]
         }
 
         genres = user_input['Genres'].split("|")
@@ -192,10 +217,9 @@ if __name__ == "__main__":
         for i in range(len(genres)):
             user_input['Genres'] = genres[i]
             rating = get_rating(answer, user_input)
-            print("Rating ", user_input['Genres'],": ", rating)
+            #print("Rating ", user_input['Genres'],": ", rating)
             final_rating += rating
 
-        print("Film name:", movie[0])
-        print("User rating: ", movie[2])
-        print("Script Rating: ", final_rating/len(genres))
+        movie_ratings = ratings[ratings.MovieID == int(movie[0])].iloc[:,2]
 
+        print(movie[1], " & ", movie[3], " & ", final_rating/len(genres), " & ", int(movie_ratings.mean()), " & ", movie_ratings.mode()[0], " \\\\")
