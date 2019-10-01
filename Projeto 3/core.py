@@ -86,7 +86,7 @@ def best_attribute(examples):
 
     attributes_entropy = []
 
-    for i in range(len(examples.columns)):
+    for i in range(len(examples.columns)-1):
         attributes_entropy.append(information_gain(examples.iloc[:,[i,-1]], entire_entropy))
 
     header = list(examples.columns)
@@ -107,15 +107,29 @@ def decision_tree(examples):
     else:
         attribute = best_attribute(examples)
         tree.root.attribute = attribute
-        for value in set(examples[attribute]):
-            child_tree = Tree()
-            relevant_examples = examples[examples[attribute] == value]
-            if not relevant_examples:
-                child_tree.root.label = most_common(examples.iloc[:,-1])
-            else:
-                child_tree = decision_tree(relevant_examples.drop(columns=[attribute]))
+        if type(examples.loc[0,attribute]) == list:
+            values = {item for sublist in examples[attribute] for item in sublist}
+            for value in values:
+                child_tree = Tree()
+                mask = examples.iloc[:,0].apply(lambda x: value in x)
+                relevant_examples = examples[mask]
+                if relevant_examples.empty:
+                    child_tree.root.label = most_common(examples.iloc[:,-1])
+                else:
+                    child_tree = decision_tree(relevant_examples.drop(columns=[attribute]))
 
-            tree.add_child(child_tree)
+                tree.add_child(child_tree)
+        else:
+            values = set(examples[attribute])
+            for value in values:
+                child_tree = Tree()
+                relevant_examples = examples[examples[attribute] == value]
+                if relevant_examples.empty:
+                    child_tree.root.label = most_common(examples.iloc[:,-1])
+                else:
+                    child_tree = decision_tree(relevant_examples.drop(columns=[attribute]))
+
+                tree.add_child(child_tree)
 
     return tree
 
