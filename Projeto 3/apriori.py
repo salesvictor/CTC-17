@@ -1,36 +1,27 @@
 import pandas as pd
 from sklearn.metrics import cohen_kappa_score
 
-#movies = pd.read_table("ml-1m/movies.dat", sep="::", names=['MovieID', 'Title', 'Genres'], engine='python')
-#users = pd.read_table("ml-1m/users.dat", sep="::", names=['UserID', 'Gender', 'Age', 'Occupation', 'Zip-code'], engine='python')
-ratings = pd.read_table("ml-1m/ratings.dat", sep="::", names=['UserID', 'MovieID', 'Rating', 'Timestamp'], engine='python')
-
-movie_ratings = ratings[ratings.MovieID == 1193].iloc[:,2]
-
-# Movie Truncated Mean
-
-print(int(movie_ratings.mean()))
-
-# Movie Mode
-
-#print(movie_ratings.value_counts())
-print(movie_ratings.mode()[0])
+y1 = [5,5,5,4,4,4,3,2,1,1]
+y2 = [4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0]
 
 # Hit Rate
 
 y3 = pd.DataFrame({'A':y1,'B':y2})
-len(y3[y3.A == y3.B].index)
+print(len(y3[y3.A == y3.B].index)/len(y1))
 
 # Confusion Matrix
 
 y_actu = pd.Series(y1, name='Actual')
 y_pred = pd.Series(y2, name='Predicted')
 df_confusion = pd.crosstab(y_actu, y_pred)
+print(df_confusion)
 
 # RMSE
-
-((y1 - y2) ** 2).mean() ** .5
+RMSE = 0
+for i in range(len(y1)):
+	RMSE += (y1[i] - y2[i]) ** 2
+print((RMSE/len(y1)) ** .5)
 
 # Cohen's Kappa
 
-sklearn.metrics.cohen_kappa_score(y1, y2)
+print(sklearn.metrics.cohen_kappa_score(y1, y2))
