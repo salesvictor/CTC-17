@@ -183,7 +183,7 @@ if __name__ == "__main__":
             'Gender': "M",
             'Age': "18",
             'Occupation': "17",
-            'Genres': movie[1]
+            'Genres': 'Action|Adventure|Animation|Children\'s|Comedy|Crime|Documentary|Drama|Fantasy|Film-Noir|Horror|Musical|Mystery|Romance|Sci-Fi|Thriller|War|Western'
         }
 
         genres = user_input['Genres'].split("|")
