@@ -70,7 +70,7 @@ def simullated_annealing(MainClass):
     init_value = MainClass.get_value(init_state)
     node = Node(init_state, init_value)
     solution = node
-    while temperature > 0:
+    while temperature > 1:
         #print(node.state, node.value)
         aux = MainClass.get_neighbor(node)
         if aux[0]:
@@ -88,8 +88,9 @@ def simullated_annealing(MainClass):
                     node = next_node
                     approved = True
                     print("Temperatura: ", temperature)
-                    temperature -= 0.001*(1+num_iter)
+                    temperature = 100/(1+num_iter)
                     num_iter += 1
+    print(num_iter)
     return solution
 
 def probability(node, next_node, temperature):
