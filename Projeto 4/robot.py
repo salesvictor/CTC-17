@@ -1,6 +1,6 @@
 import enum
 import random
-from world import Points
+import world
 
 
 class Movement(enum.Enum):
@@ -11,7 +11,7 @@ class Movement(enum.Enum):
 
     def slide_left(self):
         if self is Movement.LEFT:
-            return Movement.BACK
+            return Movement.DOWN
         if self is Movement.RIGHT:
             return Movement.UP
         if self is Movement.UP:
@@ -41,31 +41,37 @@ class Movement(enum.Enum):
 
 
 class Robot:
-    def __init__(self, world, policy, slide_left = 0.2, slide_right = 0.1):
-        self.x = random.randrange(len(world[0]))
-        self.y = random.randrange(len(world))
+    points_for_tile = {
+        world.Tile.FREE: -0.1,
+        world.Tile.PIT: -50,
+        world.Tile.WUMPUS: -100,
+        world.Tile.GOLD: 100,
+        world.Tile.OUT_OF_WORLD: -1,
+    }
+
+    def __init__(self, world: world.World = world.World(), policy=None, 
+                 slide_left=0.2, slide_right=0.1, points=0):
         self.world = world
+        self.world.set_agent(self)
+        self.x = random.randrange(self.world.max_x())
+        self.y = random.randrange(self.world.max_y())
+        self.world.set_agent_pos(self.x, self.y)
         self.policy = policy
         self.slide_left = slide_left
         self.slide_right = slide_right
-        self.points = 0
+        self.points = points
         self.movements = list(Movement)
 
     def observe_world(self):
-        if self._is_out_of_world():
-            self.points += Points.out_of_world
+        print(self.world)
+        current_tile = self.world.get_tile(self.x, self.y)
+        self.points += self.points_for_tile[current_tile]
+        if current_tile is world.Tile.OUT_OF_WORLD:
             self._go_back()
-        elif self._get_tile() == Tile.wumpus:
-            self.points += Points.wumpus
-            self._restart();
-        elif self._get_tile() == Tile.gold:
-            self.points += Points.gold
-            self._restart();
-        elif self._get_tile() == Tile.pit:
-            self.points += Points.pit
+            print(self.world)
+        elif current_tile is not world.Tile.FREE:
             self._restart()
-        else:
-            self.points += Points.free
+            self.observe_world()
 
     def take_action(self):
         movement = random.choice(self.movements)
@@ -82,23 +88,30 @@ class Robot:
         return self.world[self.y][self.x]
 
     def _is_out_of_world(self):
-        return self.x >= len(self.world[0]) or self.x < 0
-               or self.y >= len(self.world) or self.y < 0
+        return (self.x >= self.world.max_x() or self.x < 0
+                or self.y >= self.world.max_y() or self.y < 0)
 
     def _restart(self):
-        self = Robot(self.world, self.policy, self.slide_left, self.slide_right)
+        print('Restarting!')
+        self.__init__(self.world, self.policy, self.slide_left, 
+                      self.slide_right, self.points)
 
     def _go_back(self):
         if self.x == -1:
             self.x = 0
-        elif self.x == len(self.world[0]):
+        elif self.x == self.world.max_x():
             self.x -= 1
         elif self.y == -1:
             self.y = 0
-        elif self.y == len(self.world):
+        elif self.y == self.world.max_y():
             self.y -= 1
+        self.world.set_agent_pos(self.x, self.y)
 
-    def _move(self, movement):
+    def _move(self, movement: Movement):
         dx, dy = movement.change()
         self.x += dx
         self.y += dy
+        self.world.set_agent_pos(self.x, self.y)
+
+    def __str__(self):
+        return '☺'
