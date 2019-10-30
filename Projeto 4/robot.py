@@ -74,6 +74,7 @@ class Robot:
             self.observe_world()
 
     def take_action(self):
+        # TODO: implement policy
         movement = random.choice(self.movements)
         probability = random.random()
 
