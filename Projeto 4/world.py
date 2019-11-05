@@ -1,32 +1,30 @@
 import enum
-import robot
-
-
-class Tile(enum.Enum):
-    FREE = enum.auto()
-    PIT = enum.auto()
-    WUMPUS = enum.auto()
-    GOLD = enum.auto()
-    OUT_OF_WORLD = enum.auto()
-
-    def __str__(self):
-        if self is Tile.PIT:
-            return '○'
-        if self is Tile.WUMPUS:
-            return '☻'
-        if self is Tile.GOLD:
-            return '♦'
-        return ' '
 
 
 class World:
+    class Tile(enum.Enum):
+        FREE = enum.auto()
+        PIT = enum.auto()
+        WUMPUS = enum.auto()
+        GOLD = enum.auto()
+        OUT_OF_WORLD = enum.auto()
+
+        def __str__(self):
+            if self is World.Tile.PIT:
+                return '○'
+            if self is World.Tile.WUMPUS:
+                return '☻'
+            if self is World.Tile.GOLD:
+                return '♦'
+            return ' '
+
     def __init__(self, agent: object = None):
         self._world = [
             ['╔', '═',         '═',       '═',       '═',       '═',         '═',       '═',       '═',       '╗\n'],
-            ['║', Tile.FREE,   Tile.PIT,  Tile.FREE, Tile.FREE, Tile.FREE,   Tile.FREE, Tile.PIT,  Tile.FREE, '║\n'],
-            ['║', Tile.WUMPUS, Tile.GOLD, Tile.PIT,  Tile.FREE, Tile.FREE,   Tile.FREE, Tile.PIT,  Tile.FREE, '║\n'],
-            ['║', Tile.FREE,   Tile.FREE, Tile.FREE, Tile.FREE, Tile.WUMPUS, Tile.GOLD, Tile.FREE, Tile.FREE, '║\n'],
-            ['║', Tile.FREE,   Tile.FREE, Tile.PIT,  Tile.FREE, Tile.FREE,   Tile.FREE, Tile.PIT,  Tile.FREE, '║\n'],
+            ['║', World.Tile.FREE,   World.Tile.PIT,  World.Tile.FREE, World.Tile.FREE, World.Tile.FREE,   World.Tile.FREE, World.Tile.PIT,  World.Tile.FREE, '║\n'],
+            ['║', World.Tile.WUMPUS, World.Tile.GOLD, World.Tile.PIT,  World.Tile.FREE, World.Tile.FREE,   World.Tile.FREE, World.Tile.PIT,  World.Tile.FREE, '║\n'],
+            ['║', World.Tile.FREE,   World.Tile.FREE, World.Tile.FREE, World.Tile.FREE, World.Tile.WUMPUS, World.Tile.GOLD, World.Tile.FREE, World.Tile.FREE, '║\n'],
+            ['║', World.Tile.FREE,   World.Tile.FREE, World.Tile.PIT,  World.Tile.FREE, World.Tile.FREE,   World.Tile.FREE, World.Tile.PIT,  World.Tile.FREE, '║\n'],
             ['╚', '═',         '═',       '═',       '═',       '═',         '═',       '═',       '═',       '╝'],
         ]
         self._agent = agent
@@ -50,7 +48,7 @@ class World:
     def get_tile(self, x: int, y: int):
         if (x == -1 or y == -1 or x == len(self._world[0]) - 2
             or y == len(self._world) - 2):
-            return Tile.OUT_OF_WORLD
+            return World.Tile.OUT_OF_WORLD
         return self._world[y+1][x+1]
 
     def __str__(self):

@@ -1,9 +1,10 @@
+import optimizer
 import robot
+import world
 
 
 if __name__ == '__main__':
-    robot = robot.Robot()
-    for _ in range(10):
-        robot.observe_world()
-        print(f'Points: {robot.points}\n')
-        robot.take_action()
+    world = world.World()
+    robot = robot.Robot(world)
+    print(world)
+    optimizer.optimize_utility(robot, world, True)

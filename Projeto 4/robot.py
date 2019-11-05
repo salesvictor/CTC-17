@@ -3,69 +3,71 @@ import random
 import world
 
 
-class Movement(enum.Enum):
-    LEFT = enum.auto()
-    RIGHT = enum.auto()
-    UP = enum.auto()
-    DOWN = enum.auto()
-
-    def slide_left(self):
-        if self is Movement.LEFT:
-            return Movement.DOWN
-        if self is Movement.RIGHT:
-            return Movement.UP
-        if self is Movement.UP:
-            return Movement.LEFT
-        if self is Movement.DOWN:
-            return Movement.RIGHT
-
-    def slide_right(self):
-        if self is Movement.LEFT:
-            return Movement.UP
-        if self is Movement.RIGHT:
-            return Movement.DOWN
-        if self is Movement.UP:
-            return Movement.RIGHT
-        if self is Movement.DOWN:
-            return Movement.LEFT
-
-    def change(self):
-        if self is Movement.LEFT:
-            return (-1, 0)
-        if self is Movement.RIGHT:
-            return (1, 0)
-        if self is Movement.UP:
-            return (0, 1)
-        if self is Movement.DOWN:
-            return (0, -1)
-
 
 class Robot:
-    points_for_tile = {
-        world.Tile.FREE: -0.1,
-        world.Tile.PIT: -50,
-        world.Tile.WUMPUS: -100,
-        world.Tile.GOLD: 100,
-        world.Tile.OUT_OF_WORLD: -1,
+    class Movement(enum.Enum):
+        LEFT = enum.auto()
+        RIGHT = enum.auto()
+        UP = enum.auto()
+        DOWN = enum.auto()
+
+        def slide_left(self):
+            if self is Robot.Movement.LEFT:
+                return Robot.Movement.DOWN
+            if self is Robot.Movement.RIGHT:
+                return Robot.Movement.UP
+            if self is Robot.Movement.UP:
+                return Robot.Movement.LEFT
+            if self is Robot.Movement.DOWN:
+                return Robot.Movement.RIGHT
+
+        def slide_right(self):
+            if self is Robot.Movement.LEFT:
+                return Robot.Movement.UP
+            if self is Robot.Movement.RIGHT:
+                return Robot.Movement.DOWN
+            if self is Robot.Movement.UP:
+                return Robot.Movement.RIGHT
+            if self is Robot.Movement.DOWN:
+                return Robot.Movement.LEFT
+
+        def change(self):
+            if self is Robot.Movement.LEFT:
+                return (-1, 0)
+            if self is Robot.Movement.RIGHT:
+                return (1, 0)
+            if self is Robot.Movement.UP:
+                return (0, 1)
+            if self is Robot.Movement.DOWN:
+                return (0, -1)
+
+    reinforcement_for_tile = {
+        world.World.Tile.FREE: -0.1,
+        world.World.Tile.PIT: -50,
+        world.World.Tile.WUMPUS: -100,
+        world.World.Tile.GOLD: 100,
+        world.World.Tile.OUT_OF_WORLD: -1,
     }
 
     def __init__(self, world: world.World = world.World(), policy=None, 
-                 slide_left=0.2, slide_right=0.1, points=0):
+                 slide_left_probability=0.2, slide_right_probability=0.1,
+                 points=0):
         self.world = world
         self.world.set_agent(self)
         self.x = random.randrange(self.world.max_x())
         self.y = random.randrange(self.world.max_y())
         self.world.set_agent_pos(self.x, self.y)
         self.policy = policy
-        self.slide_left = slide_left
-        self.slide_right = slide_right
+        self.slide_left_probability = slide_left_probability
+        self.slide_right_probability = slide_right_probability
+        self.forward_probability = 1 - slide_left_probability - slide_right_probability
         self.points = points
-        self.movements = list(Movement)
+        self.movements = list(Robot.Movement)
 
     def observe_world(self):
         print(self.world)
         current_tile = self.world.get_tile(self.x, self.y)
-        self.points += self.points_for_tile[current_tile]
+        self.points += self.reinforcement_for_tile[current_tile]
         if current_tile is world.Tile.OUT_OF_WORLD:
             self._go_back()
             print(self.world)
